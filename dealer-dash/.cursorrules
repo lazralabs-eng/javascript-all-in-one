@@ -1,0 +1,379 @@
+You are an expert in JavaScript, React, Firebase, Supabase, and automotive SaaS dashboards.
+
+Tech stack:
+
+- React + Vite
+- Firebase/Supabase for backend
+- Tailwind CSS
+- Cloudflare Pages deployment
+- Real-time data sync for dealership metrics
+
+LOCAL CONTEXT - Technical Implementation Details:
+
+Project structure:
+
+- /components = UI components
+- Protected files: GoalSettingForm.jsx, ManagerDashboard.jsx
+
+Data schema:
+
+- Goals table: { dealership_id, manager_id, month, units_target, gross_target, pvr_target }
+- Managers table: { id, name, email, dealership_id, role }
+
+Code patterns:
+
+- Functional components only
+- useEffect cleanup for Firebase listeners
+- Color thresholds: red <70%, yellow 70-90%, green >90%
+
+UI requirements:
+
+- Automotive theme (speedometers, thermometers)
+- Manager sees only their dealership
+- Owner sees all 3 dealerships (Infiniti, Volvo, Cadillac)
+
+COMMISSION CALCULATOR - ENHANCED LOGSALEFORM:
+
+LogSaleForm.jsx is the main commission entry modal with two-column layout.
+
+LOGSALEFORM - COMPLETE DATA STRUCTURE:
+
+Required fields for ALL sales:
+- date
+- deal_number
+- stock_number
+- vin (17 characters)
+- advisor_name
+- vehicle_type (New | Used | CPO)
+- front_gross
+
+If New vehicle:
+- model (QX50/QX55/QX60/QX80)
+- year (2025 | 2026)
+
+If Used or CPO vehicle:
+- make (text)
+- model (text)
+- year (text)
+- days_in_stock (number)
+
+If Trade-In checked:
+- trade_year
+- trade_make
+- trade_model
+- trade_stock_number
+- trade_vin
+- trade_acv (Actual Cash Value)
+
+Backend products:
+- financing/lease: { enabled, type, reserve_amount, commission }
+- maintenance_plan: { enabled, gross_profit, commission: 30 }
+- extended_warranty_vsc: { enabled, gross_profit, commission: 150 }
+- gap_insurance: { enabled, gross_profit, commission: 30 }
+- paint_protection: { enabled, gross_profit, commission: 30 }
+- tire_wheel: { enabled, gross_profit, commission: 30 }
+- accessories: { enabled, gross_profit, commission: 30 }
+
+Split deal fields:
+- split_deal: boolean
+- secondary_advisor: string | null
+- primary_split: number
+- secondary_split: number
+
+COMMISSION AMOUNTS (CORRECTED):
+- Base: $250
+- Financing: $100
+- Lease: $100
+- Maintenance Plan: $30
+- Extended Warranty (VSC): $150
+- GAP: $30
+- Paint Protection: $30
+- Tire & Wheel: $30
+- Accessories: $30
+
+GROSS PROFIT CALCULATION:
+Total Gross = Front Gross + Reserve + Sum(Product Gross Profits)
+
+PVR CALCULATION:
+PVR = (Reserve + Sum(Product Gross Profits)) / Number of Deals
+
+LEFT PANEL - Sale Entry:
+
+- Date (default today), Deal #, Stock #
+- Advisor dropdown (John, Mark, Jennifer for now)
+- Split Deal checkbox (below advisor dropdown)
+  - When checked: Show secondary advisor dropdown + split percentage inputs (must total 100%)
+- Vehicle Type toggle: New or Used
+  - If New: Model dropdown (QX50, QX55, QX60, QX80)
+  - If Used: Make, Model, Year text inputs
+- Front Gross currency input
+
+Backend Products (expandable when checked):
+
+- Financing: $100 default
+- Lease: $100 default
+- Maintenance Plan (Service Contract): $150 default
+  - Shows: Gross profit input, editable commission
+- Extended Warranty: $30 default
+  - Shows: Gross profit input, editable commission
+- GAP Insurance: $30 default
+  - Shows: Gross profit input, editable commission
+- Paint/Fabric Protection: $30 default
+  - Shows: Gross profit input, editable commission
+- Tire & Wheel: $30 default
+  - Shows: Gross profit input, editable commission
+- Accessories: $30 default
+  - Shows: Gross profit input, editable commission
+
+COMMISSION DEFAULTS (CORRECTED):
+- Base sale commission: $250
+- Financing: $100
+- Lease: $100
+- Maintenance Plan: $30
+- Extended Warranty (VSC): $150
+- GAP Insurance: $30
+- Paint/Fabric Protection: $30
+- Tire & Wheel: $30
+- Accessories: $30
+
+Trade-In checkbox
+
+Totals section:
+
+- Backend Total (sum of checked products)
+- Total Deal Gross (front gross shown)
+- Base Commission: $250 (editable)
+- Backend Commission (calculated)
+- TOTAL COMMISSION (base + backend)
+
+RIGHT PANEL - Commission Preview:
+
+- Use CommissionSummary.jsx component
+- Shows: Advisor name, deal number, vehicle
+- Lists checked products with commissions
+- Shows running total commission
+- Below: Recent Sales list (last 5)
+
+Product expansion behavior:
+
+- Unchecked: Show product name + default commission only
+- Checked: Expand to show gross profit input + editable commission input
+- Financing checked: Also show Finance/Lease toggle + Reserve input
+
+SPLIT DEAL HANDLING:
+- Add checkbox below advisor dropdown: "☐ Split Deal?"
+- When checked, show second advisor dropdown
+- Commission split: 50/50 between advisors (editable %)
+- Both advisors appear in commission reports
+- Data structure:
+  split_deal: boolean
+  primary_advisor: string
+  secondary_advisor: string | null
+  primary_split: number (default 50)
+  secondary_split: number (default 50)
+- Validation: If splitDeal checked, secondaryAdvisor required, splits must total 100%
+- Commission calculation:
+  - If split deal: Primary gets (total_commission * primary_split / 100), Secondary gets (total_commission * secondary_split / 100)
+
+LOGSALEFORM - COMPLETE DATA STRUCTURE:
+
+Required fields for ALL sales:
+- date
+- deal_number
+- stock_number
+- vin (17 characters)
+- advisor_name
+- vehicle_type (New | Used | CPO)
+- front_gross
+
+If New vehicle:
+- model (QX50/QX55/QX60/QX80)
+- year (2025 | 2026)
+
+If Used or CPO vehicle:
+- make (text)
+- model (text)
+- year (text)
+- days_in_stock (number)
+
+If Trade-In checked:
+- trade_year
+- trade_make
+- trade_model
+- trade_stock_number
+- trade_vin
+- trade_acv (Actual Cash Value)
+
+Backend products:
+- financing/lease: { enabled, type, reserve_amount, commission }
+- maintenance_plan: { enabled, gross_profit, commission: 30 }
+- extended_warranty_vsc: { enabled, gross_profit, commission: 150 }
+- gap_insurance: { enabled, gross_profit, commission: 30 }
+- paint_protection: { enabled, gross_profit, commission: 30 }
+- tire_wheel: { enabled, gross_profit, commission: 30 }
+- accessories: { enabled, gross_profit, commission: 30 }
+
+Split deal fields:
+- split_deal: boolean
+- secondary_advisor: string | null
+- primary_split: number
+- secondary_split: number
+
+COMMISSION AMOUNTS (CORRECTED):
+- Base: $250
+- Financing: $100
+- Lease: $100
+- Maintenance Plan: $30
+- Extended Warranty (VSC): $150
+- GAP: $30
+- Paint Protection: $30
+- Tire & Wheel: $30
+- Accessories: $30
+
+GROSS PROFIT CALCULATION:
+Total Gross = Front Gross + Reserve + Sum(Product Gross Profits)
+
+PVR CALCULATION:
+PVR = (Reserve + Sum(Product Gross Profits)) / Number of Deals
+
+Styling: Match existing dashboard (dark navy bg, white cards, Tailwind CSS)
+
+SALES LOG TABLE VIEW:
+- Accessed via "View Sales Log" button (add to ManagerDashboard)
+- Shows all logged deals in table format
+- Columns: Date, Deal#, Advisor, Vehicle, Front Gross, Backend Total, Commission, Split, Actions
+- Filterable by: Date range, Advisor, Vehicle type
+- Sortable by: Date, Commission
+- Actions: [Edit] [Delete] buttons per row
+- Pagination: 25 rows per page
+- Export to CSV button
+
+Edit functionality:
+- Opens LogSaleForm in edit mode
+- Pre-fills all fields from existing sale
+- Tracks edit history (who, when, what changed)
+- Requires reason for edit (dropdown + notes)
+
+Delete functionality:
+- Opens DeleteSaleModal
+- Requires reason (dropdown: Return, Unwind, Duplicate, Error, Other)
+- Requires notes (min 10 chars)
+- Soft delete (marks deleted=true)
+- Updates advisor commission totals
+- Shows confirmation with impact warning
+
+MONTHLY PLAYBOOK - GOAL SETTING:
+
+GoalSettingForm.jsx is a multi-step wizard (6 steps).
+
+STEP 1: Team Setup & Overview
+- List active advisors with stats
+- [+ Add Advisor] button
+- Monthly targets (units, gross, backend PVR)
+
+STEP 2: Inventory & Forecast
+- New cars on ground, coming this month
+- Model-by-model forecast (QX50/55/60/80 with targets)
+
+STEP 3: Backend Breakdown
+- Financing reserve target
+- Product-by-product targets (Maintenance, Gap, etc.)
+
+STEP 4: Pre-owned Targets
+- CPO vs Non-CPO forecast
+
+STEP 5: Aging Inventory
+- 10 oldest cars to move (stock numbers)
+
+STEP 6: Review & Submit
+- Show complete playbook summary
+- Require GM/GSM password to submit
+
+PASSWORD PROTECTION:
+- After Step 6 "Submit Goals" clicked, show password modal
+- Hardcoded passwords for now:
+  - GM password: "gm2026"
+  - GSM password: "gsm2026"
+- If wrong password: Show error, stay on Step 6
+- If correct: Submit to Firebase, lock playbook
+
+LOCKED PLAYBOOK:
+- Once submitted, goals cannot be edited
+- To modify: Require password again + edit reason
+- Show "Last modified by [Role] on [Date]" at top
+- Edit history tracked in database
+
+DATA STRUCTURE:
+goals {
+  dealership_id,
+  month,
+  submitted_at,
+  submitted_by_role, // "GM" or "GSM"
+  locked: true,
+  edit_history: [...],
+  advisors: [...],
+  inventory: {...},
+  forecast: {...},
+  backend_targets: {...},
+  preowned_targets: {...},
+  aging_inventory: [...]
+}
+
+Code style:
+
+- Functional components, hooks only
+- Clear variable names (no abbreviations)
+- Extract reusable logic early
+- Prioritize readability over cleverness
+
+Project context:
+
+- Building an automotive-themed dashboard (Dealer Dash) for multi-dealership management, where managers view metrics and goals for their own dealership and owners access cross-dealership performance comparisons.
+- Tracking: unit sales, gross profit, backend PVR, goals
+- Manager goal-setting by 5th of month
+- Color-coded alerts, automotive-themed UI (speedometers, thermometers)
+- Cross-location comparisons
+
+CRITICAL RULES - ALWAYS FOLLOW:
+
+- Never modify Firebase/Supabase config files without explicit permission
+- Never delete API keys, auth tokens, or environment variables
+- Never refactor working real-time sync logic unless asked
+- Always preserve existing data structure when modifying components
+- Flag breaking changes before implementing them
+
+PROTECTED COMPONENTS:
+
+1. GoalSettingForm.jsx - Goal calculation logic (unit sales, gross, backend PVR)
+2. ManagerDashboard.jsx - Manager auth/permissions, data filtering by dealership
+3. OwnerDashboard.jsx - Cross-dealership aggregation queries
+4. LoginScreen.jsx - Auth flow and session management
+5. Speedometer.jsx, Thermometer.jsx, TORQGauge.jsx - Visualization thresholds and color logic
+
+MODIFICATION RULES FOR PROTECTED COMPONENTS:
+
+- Show full diff before changing calculation logic
+- Preserve existing useEffect cleanup functions (real-time listeners)
+- Never change prop interfaces without checking all parent components
+- Keep color thresholds intact unless explicitly asked to modify
+
+WHEN REFACTORING:
+
+- Extract shared logic to /utils or custom hooks
+- Don't touch working dashboard queries without permission
+- Maintain backwards compatibility with existing Firebase/Supabase data schema
+
+FILE STRUCTURE EXPECTATIONS:
+
+- /components = Reusable UI (gauges, forms, auth)
+- /assets = Static resources (react.svg)
+- App.css = Global styles, keep Tailwind config separate
+- Keep component files under 300 lines (suggest splits if longer)
+
+When helping:
+
+- Give complete, working code blocks
+- Flag common Firebase/Supabase pitfalls (listener cleanup, query limits)
+- Suggest performance optimizations for real-time data
+- Keep components small and focused
+- Always test color-coded alert logic against threshold ranges

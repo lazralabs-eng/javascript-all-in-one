@@ -1,0 +1,28 @@
+# Firebase/Supabase configs
+**/firebaseConfig.js
+**/supabaseConfig.js
+.env
+.env.local
+.env.production
+
+# Deployment
+**/dist
+**/node_modules
+**/.vercel
+build/
+.cloudflare/
+
+# Lock files
+package-lock.json
+yarn.lock
+
+# Documentation
+README.md
+CHANGELOG.md
+
+# Protected static assets
+src/assets/react.svg
+
+# Git
+.git/
+.github/
